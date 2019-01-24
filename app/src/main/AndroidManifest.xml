@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.main.activity.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -26,7 +26,7 @@
         </activity>
 
         <service
-            android:name=".task.jobs.GithubUseCase"
+            android:name=".task.jobs.CustomJobService"
             android:label="Github Service"
             android:permission="android.permission.BIND_JOB_SERVICE" >
         </service>

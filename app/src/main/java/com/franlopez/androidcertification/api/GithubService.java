@@ -1,6 +1,6 @@
 package com.franlopez.androidcertification.api;
 
-import com.franlopez.androidcertification.data.RepoSearchDto;
+import com.franlopez.androidcertification.data.dto.RepoSearchDto;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

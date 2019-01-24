@@ -1,4 +1,4 @@
-package com.franlopez.androidcertification.data;
+package com.franlopez.androidcertification.data.dto;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -13,4 +13,16 @@ public class RepoSearchDto {
     List<RepoDto> items = new ArrayList();
 
     Integer nextPage = null;
+
+    public int getTotalCount() {
+        return totalCount;
+    }
+
+    public List<RepoDto> getItems() {
+        return items;
+    }
+
+    public Integer getNextPage() {
+        return nextPage;
+    }
 }

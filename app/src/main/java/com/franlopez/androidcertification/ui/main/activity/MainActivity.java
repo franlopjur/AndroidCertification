@@ -1,6 +1,9 @@
-package com.franlopez.androidcertification;
+package com.franlopez.androidcertification.ui.main.activity;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -12,12 +15,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
-import com.franlopez.androidcertification.task.UseCaseUtil;
-import com.franlopez.androidcertification.task.jobs.GithubUseCase;
+import com.franlopez.androidcertification.R;
+import com.franlopez.androidcertification.data.domain.RepoDomain;
+import com.franlopez.androidcertification.ui.viewmodel.SearchRepoViewModel;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private SearchRepoViewModel searchRepoViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +39,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                searchRepoViewModel.searchRepos("Android", 1, 10);
             }
         });
 
@@ -44,7 +52,13 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        UseCaseUtil.scheduleJob(this, GithubUseCase.class);
+        searchRepoViewModel = ViewModelProviders.of(this).get(SearchRepoViewModel.class);
+        searchRepoViewModel.getSearchReposLiveData().observe(this, new Observer<List<RepoDomain>>() {
+            @Override
+            public void onChanged(@Nullable List<RepoDomain> repoDomains) {
+                Toast.makeText(MainActivity.this, repoDomains.size() + "", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
