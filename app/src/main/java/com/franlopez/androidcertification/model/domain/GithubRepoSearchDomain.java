@@ -1,14 +1,11 @@
-package com.franlopez.androidcertification.data.domain;
-
-import com.franlopez.androidcertification.data.dto.RepoDto;
-import com.google.gson.annotations.SerializedName;
+package com.franlopez.androidcertification.model.domain;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RepoSearchDomain {
+public class GithubRepoSearchDomain {
     private int totalCount = 0;
-    private List<RepoDomain> items = new ArrayList();
+    private List<GithubRepoDomain> items = new ArrayList();
     private Integer nextPage = null;
 
     public int getTotalCount() {
@@ -19,11 +16,11 @@ public class RepoSearchDomain {
         this.totalCount = totalCount;
     }
 
-    public List<RepoDomain> getItems() {
+    public List<GithubRepoDomain> getItems() {
         return items;
     }
 
-    public void setItems(List<RepoDomain> items) {
+    public void setItems(List<GithubRepoDomain> items) {
         this.items = items;
     }
 

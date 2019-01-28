@@ -1,23 +1,24 @@
-package com.franlopez.androidcertification.data.dto;
+package com.franlopez.androidcertification.model.dto;
 
+import com.franlopez.androidcertification.commons.Constants;
 import com.google.gson.annotations.SerializedName;
 
-public class RepoDto {
-    @SerializedName("id")
+public class GithubRepoDto {
+    @SerializedName(Constants.DTO.GithubRepo.ID)
     long id;
-    @SerializedName("name")
+    @SerializedName(Constants.DTO.GithubRepo.NAME)
     String name;
-    @SerializedName("full_name")
+    @SerializedName(Constants.DTO.GithubRepo.FULL_NAME)
     String fullName;
-    @SerializedName("description")
+    @SerializedName(Constants.DTO.GithubRepo.DESCRIPTION)
     String description;
-    @SerializedName("html_url")
+    @SerializedName(Constants.DTO.GithubRepo.HTML_URL)
     String url;
-    @SerializedName("stargazers_count")
+    @SerializedName(Constants.DTO.GithubRepo.STARGAZERS_COUNT)
     int stars;
-    @SerializedName("forks_count")
+    @SerializedName(Constants.DTO.GithubRepo.FORKS_COUNT)
     int forks;
-    @SerializedName("language")
+    @SerializedName(Constants.DTO.GithubRepo.LANGUAGE)
     String language;
 
     public long getId() {

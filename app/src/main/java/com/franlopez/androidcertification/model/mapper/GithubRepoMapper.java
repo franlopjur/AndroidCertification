@@ -1,25 +1,28 @@
-package com.franlopez.androidcertification.data.mapper;
+package com.franlopez.androidcertification.model.mapper;
 
-import com.franlopez.androidcertification.data.domain.RepoDomain;
-import com.franlopez.androidcertification.data.dto.RepoDto;
+import com.franlopez.androidcertification.model.domain.GithubRepoDomain;
+import com.franlopez.androidcertification.model.dto.GithubRepoDto;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RepoMapper {
-    public static List<RepoDomain> dtoListToDomainList(List<RepoDto> dtoList) {
-        List<RepoDomain> domainList = new ArrayList<>();
+public class GithubRepoMapper {
+    //region Public Methods
+    public static List<GithubRepoDomain> dtoListToDomainList(List<GithubRepoDto> dtoList) {
+        List<GithubRepoDomain> domainList = new ArrayList<>();
         if (dtoList != null &&
                 !dtoList.isEmpty()) {
-            for (RepoDto dto : dtoList) {
+            for (GithubRepoDto dto : dtoList) {
                 domainList.add(dtoToDomain(dto));
             }
         }
         return domainList;
     }
+    //endregion
 
-    public static RepoDomain dtoToDomain(RepoDto dto) {
-        RepoDomain domain = new RepoDomain();
+    //region Private Methods
+    private static GithubRepoDomain dtoToDomain(GithubRepoDto dto) {
+        GithubRepoDomain domain = new GithubRepoDomain();
         if (dto != null) {
             domain.setDescription(dto.getDescription());
             domain.setForks(dto.getForks());
@@ -32,4 +35,5 @@ public class RepoMapper {
         }
         return domain;
     }
+    //endregion
 }

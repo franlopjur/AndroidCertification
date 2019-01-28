@@ -1,26 +1,22 @@
-package com.franlopez.androidcertification.data.domain;
+package com.franlopez.androidcertification.model.domain;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-@Entity(tableName = "Repos")
-public class RepoDomain {
+import com.franlopez.androidcertification.commons.Constants;
+
+@Entity(tableName = Constants.DB.GithubRepo.TABLE_NAME)
+public class GithubRepoDomain {
     @PrimaryKey
     private long id;
-    @ColumnInfo(name = "name")
     private String name;
-    @ColumnInfo(name = "full_name")
+    @ColumnInfo(name = Constants.DB.GithubRepo.FULL_NAME)
     private String fullName;
-    @ColumnInfo(name = "description")
     private String description;
-    @ColumnInfo(name = "url")
     private String url;
-    @ColumnInfo(name = "stars")
     private int stars;
-    @ColumnInfo(name = "forks")
     private int forks;
-    @ColumnInfo(name = "language")
     private String language;
 
     public long getId() {

@@ -5,8 +5,6 @@ import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 
-import java.util.List;
-
 public class JobSchedulerUtil {
 
     public static final boolean NO_FINALIZE_JOB_AFTER_EXECUTE = true;

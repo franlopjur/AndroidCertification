@@ -2,55 +2,89 @@ package com.franlopez.androidcertification.data;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.text.TextUtils;
 
-import com.franlopez.androidcertification.api.call.GithubCalls;
-import com.franlopez.androidcertification.data.domain.RepoDomain;
-import com.franlopez.androidcertification.data.domain.RepoSearchDomain;
-import com.franlopez.androidcertification.db.MyDatabase;
+import com.franlopez.androidcertification.model.domain.GithubRepoDomain;
 
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 public class GithubRepository {
-    private static GithubRepository sInstance;
+    //region Members
+    private GithubRepoApiDataSource repoApiDataSource;
+    private GithubRepoCacheDataSource repoCacheDataSource;
 
-    public static synchronized GithubRepository getInstance() {
-        if (sInstance == null) {
-            sInstance = new GithubRepository();
-        }
-        return sInstance;
+    private int lastPageRequestedNumber = 1;
+    private String lastQueryInfoRequested = null;
+
+    private MutableLiveData<List<GithubRepoDomain>> searchReposLiveData = new MutableLiveData<>();
+    private MutableLiveData<String> errorMessageLiveData = new MutableLiveData<>();
+    //endregion
+
+    //region Constructors
+    public GithubRepository() {
+        this.repoApiDataSource = new GithubRepoApiDataSource();
+        this.repoCacheDataSource = new GithubRepoCacheDataSource();
     }
+    //endregion
 
-    private MutableLiveData<List<RepoDomain>> searchReposLiveData = new MutableLiveData<>();
-
-    public LiveData<List<RepoDomain>> getSearchReposLiveData() {
+    //region Getters and Setters
+    public LiveData<List<GithubRepoDomain>> getSearchReposLiveData() {
         return searchReposLiveData;
     }
 
-    public LiveData<List<RepoDomain>> searchRepos(String query, int page, int itemsPerPage) {
-        if (searchReposLiveData != null &&
-                searchReposLiveData.getValue() == null) {
-            GithubCalls.searchRepositories(query, page, itemsPerPage, new RepositoryListener<RepoSearchDomain>() {
-                @Override
-                public void onSuccess(final RepoSearchDomain response) {
-                    searchReposLiveData.setValue(response.getItems());
-                    Executor executor = Executors.newSingleThreadExecutor();
-                    executor.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            MyDatabase.getInstance().reposDao().insert(response.getItems());
-                            MyDatabase.getInstance().reposDao().getRepos();
-                        }
-                    });
-                }
-
-                @Override
-                public void onError(String errorMessage) {
-
-                }
-            });
-        }
-        return searchReposLiveData;
+    public LiveData<String> getErrorMessageLiveData() {
+        return errorMessageLiveData;
     }
+
+    private String getLastQueryInfoRequested() {
+        return lastQueryInfoRequested;
+    }
+
+    private int getLastPageRequestedNumber() {
+        return lastPageRequestedNumber;
+    }
+
+    private void setLastQueryInfoRequested(String query) {
+        this.lastQueryInfoRequested = query;
+    }
+
+    //endregion
+
+    //region Public Methods
+    public LiveData<List<GithubRepoDomain>> searchRepos(String query) {
+        if (!isSameQueryThanLastQuery(query)) {
+            resetLastPageRequestedNumber();
+            setLastQueryInfoRequested(query);
+        }
+        repoApiDataSource.getGithubRepos(query, getLastPageRequestedNumber(),
+                                       new RepositoryListener<List<GithubRepoDomain>>() {
+            @Override
+            public void onSuccess(List<GithubRepoDomain> response) {
+                increaseLastPageRequestedNumber();
+                repoCacheDataSource.insert(response);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                errorMessageLiveData.setValue(errorMessage);
+            }
+        });
+        return repoCacheDataSource.getGithubRepos(query);
+    }
+    //endregion
+
+    //region Private Methods
+    private boolean isSameQueryThanLastQuery(String query) {
+        return !TextUtils.isEmpty(getLastQueryInfoRequested()) &&
+                getLastQueryInfoRequested().equalsIgnoreCase(query);
+    }
+
+    private void resetLastPageRequestedNumber() {
+        this.lastPageRequestedNumber = 1;
+    }
+
+    private void increaseLastPageRequestedNumber() {
+        this.lastPageRequestedNumber++;
+    }
+    //endregion
 }
