@@ -6,6 +6,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 
+import com.franlopez.androidcertification.SingleLiveEvent;
 import com.franlopez.androidcertification.data.GithubRepository;
 import com.franlopez.androidcertification.model.domain.GithubRepoDomain;
 
@@ -15,7 +16,7 @@ public class SearchRepoViewModel extends ViewModel {
 
     //region Members
     private GithubRepository githubRepository;
-    private MutableLiveData<String> queryLiveData = new MutableLiveData<>();
+    private MutableLiveData<String> queryLiveData = new SingleLiveEvent<>();
 
 
     private LiveData<String> errorMessageLiveData;

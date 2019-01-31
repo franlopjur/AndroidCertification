@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.text.TextUtils;
 
+import com.franlopez.androidcertification.SingleLiveEvent;
 import com.franlopez.androidcertification.model.domain.GithubRepoDomain;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class GithubRepository {
     private String lastQueryInfoRequested = null;
 
     private MutableLiveData<List<GithubRepoDomain>> searchReposLiveData = new MutableLiveData<>();
-    private MutableLiveData<String> errorMessageLiveData = new MutableLiveData<>();
+    private SingleLiveEvent<String> errorMessageLiveData = new SingleLiveEvent<>();
     //endregion
 
     //region Constructors
