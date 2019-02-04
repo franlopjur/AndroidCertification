@@ -82,7 +82,7 @@ public class GithubRepository {
             public void onSuccess(List<GithubRepoDomain> response) {
                 if (response != null &&
                         !response.isEmpty()) {
-                    callback.setLastPageRequestedNumber(((response.size() / 50) + 1));
+                    callback.setLastPageRequestedNumber(((response.size() / Constants.ITEMS_PER_PAGE_NETWORK) + 1));
                 }
             }
 
