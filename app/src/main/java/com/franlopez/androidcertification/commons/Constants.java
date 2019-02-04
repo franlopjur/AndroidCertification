@@ -3,7 +3,9 @@ package com.franlopez.androidcertification.commons;
 public class Constants {
     public static final String BASE_URL = "https://api.github.com/";
     public static final String DB_NAME = "androidCertificationDatabase";
-    public static final int ITEMS_PER_PAGE = 15;
+    public static final int ITEMS_PER_PAGE_DB = 20;
+    public static final int ITEMS_PER_PAGE_NETWORK = 50;
+    public static final int PREFETCH_DISTANCE = 5;
 
     public static class DB {
         public static class GithubRepo {

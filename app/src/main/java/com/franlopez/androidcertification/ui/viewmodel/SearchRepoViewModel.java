@@ -5,6 +5,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
+import android.arch.paging.PagedList;
 
 import com.franlopez.androidcertification.SingleLiveEvent;
 import com.franlopez.androidcertification.data.GithubRepository;
@@ -20,11 +21,13 @@ public class SearchRepoViewModel extends ViewModel {
 
 
     private LiveData<String> errorMessageLiveData;
-    private LiveData<List<GithubRepoDomain>> githubReposListFromRepositoryLiveData = Transformations.switchMap(queryLiveData, new Function<String, LiveData<List<GithubRepoDomain>>>() {
-        @Override
-        public LiveData<List<GithubRepoDomain>> apply(String query) {
-            return searchRepos(query);
-        }
+    private LiveData<PagedList<GithubRepoDomain>> githubReposListFromRepositoryLiveData =
+            Transformations.switchMap(queryLiveData,
+                                      new Function<String, LiveData<PagedList<GithubRepoDomain>>>() {
+                                            @Override
+                                            public LiveData<PagedList<GithubRepoDomain>> apply(String query) {
+                                                return searchRepos(query);
+                                            }
     });
     //endregion
 
@@ -36,7 +39,7 @@ public class SearchRepoViewModel extends ViewModel {
     //endregion
 
     //region Getters
-    public LiveData<List<GithubRepoDomain>> getSearchReposLiveData() {
+    public LiveData<PagedList<GithubRepoDomain>> getSearchReposLiveData() {
         return githubReposListFromRepositoryLiveData;
     }
 
@@ -52,7 +55,7 @@ public class SearchRepoViewModel extends ViewModel {
     //endregion
 
     //region Private Methods
-    private LiveData<List<GithubRepoDomain>> searchRepos(String query) {
+    private LiveData<PagedList<GithubRepoDomain>> searchRepos(String query) {
         return githubRepository.searchRepos(query);
     }
     //endregion

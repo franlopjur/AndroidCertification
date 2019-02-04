@@ -13,10 +13,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.franlopez.androidcertification.commons.Constants.ITEMS_PER_PAGE_NETWORK;
+
 public class GithubRepoApiDataSource extends GithubRepoDataSource<List<GithubRepoDomain>> {
     @Override
-    protected List<GithubRepoDomain> getGithubRepos(String query, int page, final RepositoryListener<List<GithubRepoDomain>> callback) {
-        GithubRequest.searchRepositories(query, page, Constants.ITEMS_PER_PAGE).enqueue(new Callback<GithubRepoSearchDto>() {
+    public List<GithubRepoDomain> getGithubRepos(String query, int page, final RepositoryListener<List<GithubRepoDomain>> callback) {
+        GithubRequest.searchRepositories(query, page, ITEMS_PER_PAGE_NETWORK).enqueue(new Callback<GithubRepoSearchDto>() {
             @Override
             public void onResponse(Call<GithubRepoSearchDto> call, Response<GithubRepoSearchDto> response) {
                 if (response.isSuccessful() &&

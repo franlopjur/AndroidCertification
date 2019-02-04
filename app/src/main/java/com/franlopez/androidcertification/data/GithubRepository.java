@@ -2,10 +2,15 @@ package com.franlopez.androidcertification.data;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.paging.DataSource;
+import android.arch.paging.LivePagedListBuilder;
+import android.arch.paging.PagedList;
 import android.text.TextUtils;
 
 import com.franlopez.androidcertification.SingleLiveEvent;
+import com.franlopez.androidcertification.commons.Constants;
 import com.franlopez.androidcertification.model.domain.GithubRepoDomain;
+import com.franlopez.androidcertification.ui.main.GithubRepoBoundaryCallback;
 
 import java.util.List;
 
@@ -14,7 +19,7 @@ public class GithubRepository {
     private GithubRepoApiDataSource repoApiDataSource;
     private GithubRepoCacheDataSource repoCacheDataSource;
 
-    private int lastPageRequestedNumber = 1;
+    private GithubRepoBoundaryCallback callback;
     private String lastQueryInfoRequested = null;
 
     private MutableLiveData<List<GithubRepoDomain>> searchReposLiveData = new MutableLiveData<>();
@@ -36,41 +41,24 @@ public class GithubRepository {
     public LiveData<String> getErrorMessageLiveData() {
         return errorMessageLiveData;
     }
-
-    private String getLastQueryInfoRequested() {
-        return lastQueryInfoRequested;
-    }
-
-    private int getLastPageRequestedNumber() {
-        return lastPageRequestedNumber;
-    }
-
-    private void setLastQueryInfoRequested(String query) {
-        this.lastQueryInfoRequested = query;
-    }
-
     //endregion
 
     //region Public Methods
-    public LiveData<List<GithubRepoDomain>> searchRepos(String query) {
-        if (!isSameQueryThanLastQuery(query)) {
-            resetLastPageRequestedNumber();
+    public LiveData<PagedList<GithubRepoDomain>> searchRepos(final String query) {
+        if (!isSameQueryThanLastQuery(query) ||
+                callback == null) {
+            callback = new GithubRepoBoundaryCallback(query, repoApiDataSource, repoCacheDataSource);
             setLastQueryInfoRequested(query);
+            setUpLastPageNumberToQuery(query);
         }
-        repoApiDataSource.getGithubRepos(query, getLastPageRequestedNumber(),
-                                       new RepositoryListener<List<GithubRepoDomain>>() {
-            @Override
-            public void onSuccess(List<GithubRepoDomain> response) {
-                increaseLastPageRequestedNumber();
-                repoCacheDataSource.insert(response);
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                errorMessageLiveData.setValue(errorMessage);
-            }
-        });
-        return repoCacheDataSource.getGithubRepos(query);
+        DataSource.Factory<Integer, GithubRepoDomain> factory = repoCacheDataSource.getGithubRepos(query);
+        PagedList.Config config = new PagedList.Config.Builder().setEnablePlaceholders(true).
+                setInitialLoadSizeHint(Constants.ITEMS_PER_PAGE_DB).
+                setPageSize(Constants.ITEMS_PER_PAGE_DB).
+                setPrefetchDistance(Constants.PREFETCH_DISTANCE).build();
+        LivePagedListBuilder livePagedBuilder = new LivePagedListBuilder(factory, config);
+        livePagedBuilder.setBoundaryCallback(callback);
+        return livePagedBuilder.build();
     }
     //endregion
 
@@ -80,12 +68,29 @@ public class GithubRepository {
                 getLastQueryInfoRequested().equalsIgnoreCase(query);
     }
 
-    private void resetLastPageRequestedNumber() {
-        this.lastPageRequestedNumber = 1;
+    private String getLastQueryInfoRequested() {
+        return lastQueryInfoRequested;
     }
 
-    private void increaseLastPageRequestedNumber() {
-        this.lastPageRequestedNumber++;
+    private void setLastQueryInfoRequested(String query) {
+        this.lastQueryInfoRequested = query;
+    }
+
+    private void setUpLastPageNumberToQuery(String query) {
+        repoCacheDataSource.getGithubReposSync(query, new RepositoryListener<List<GithubRepoDomain>>() {
+            @Override
+            public void onSuccess(List<GithubRepoDomain> response) {
+                if (response != null &&
+                        !response.isEmpty()) {
+                    callback.setLastPageRequestedNumber(((response.size() / 50) + 1));
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                //- DO ANYTHING
+            }
+        });
     }
     //endregion
 }
