@@ -1,11 +1,25 @@
 package com.franlopez.androidcertification;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.franlopez.androidcertification.commons.FileUtils;
+import com.franlopez.androidcertification.commons.ValidationUtils;
+import com.franlopez.androidcertification.db.MyDatabase;
+import com.franlopez.androidcertification.db.dao.GithubRepoDao;
+import com.franlopez.androidcertification.model.domain.GithubRepoDomain;
+import com.franlopez.androidcertification.model.domain.GithubRepoSearchDomain;
+
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -16,11 +30,55 @@ import static org.junit.Assert.*;
  */
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
-    @Test
-    public void useAppContext() {
-        // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.franlopez.androidcertification", appContext.getPackageName());
+    private GithubRepoDao githubRepoDao;
+    private MyDatabase db;
+
+    @Before
+    public void createDb() {
+        Context appContext = InstrumentationRegistry.getTargetContext();
+        db = Room.inMemoryDatabaseBuilder(appContext, MyDatabase.class).build();
+        githubRepoDao = db.reposDao();
+    }
+
+    @After
+    public void closeDb() throws IOException {
+        db.close();
+    }
+
+    @Test
+    public void validateElementsFromService() {
+        List<GithubRepoDomain> onlyAndroidElements = callAndroidGithubRepos();
+        List<GithubRepoDomain> notOnlyAndroidElements = callRandomGithubRepos();
+
+        assertTrue(allItemsContainsStringPassed(onlyAndroidElements, "Android"));
+        assertFalse(allItemsContainsStringPassed(notOnlyAndroidElements, "Android"));
+    }
+
+    private boolean allItemsContainsStringPassed(List<GithubRepoDomain> elements, String text) {
+        for (GithubRepoDomain current : elements) {
+            if (current != null &&
+            !ValidationUtils.containsText(current.getDescription(), text) &&
+            !ValidationUtils.containsText(current.getName(), text)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private List<GithubRepoDomain> callAndroidGithubRepos() {
+        GithubRepoSearchDomain response = new GithubRepoSearchDomain();
+        response = FileUtils.readJsonFile("json/allItemsContainsAndroidText.json",
+                                          response.getClass());
+        return response != null ?
+                response.getItems() : new ArrayList<GithubRepoDomain>();
+    }
+
+    private List<GithubRepoDomain> callRandomGithubRepos() {
+        GithubRepoSearchDomain response = new GithubRepoSearchDomain();
+        response = FileUtils.readJsonFile("json/notAllItemsContainsAndroidText.json",
+                                          response.getClass());
+        return response != null ?
+                response.getItems() : new ArrayList<GithubRepoDomain>();
     }
 }
