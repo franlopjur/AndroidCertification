@@ -8,34 +8,31 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.util.DiffUtil;
-import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.util.DiffUtil;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.franlopez.androidcertification.R;
-import com.franlopez.androidcertification.commons.ResourceUtils;
 import com.franlopez.androidcertification.model.domain.GithubRepoDomain;
 import com.franlopez.androidcertification.ui.main.GithubRepoAdapter;
 import com.franlopez.androidcertification.ui.viewmodel.SearchRepoViewModel;
 
 import java.util.Calendar;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -48,6 +45,8 @@ public class MainActivity extends AppCompatActivity
     private NavigationView navigationView;
     private EditText queryInput;
     private RecyclerView resultsList;
+    private ProgressBar loadingIndicator;
+
     private long timeStampToLastModificationIntoInput;
 
     private final static int TIME_TO_LAUNCH_REQUEST = 2000;
@@ -60,32 +59,10 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initializeViews();
-        setSupportActionBar(toolbar);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                searchRepoViewModel.updateQuery(queryInput.getText().toString());
-            }
-        });
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-        navigationView.setNavigationItemSelectedListener(this);
+        setUpMenuAndFab();
         registerObserverIntoLiveData();
         setUpTextWatcher();
-        resultsList.setAdapter(new GithubRepoAdapter(new DiffUtil.ItemCallback<GithubRepoDomain>() {
-            @Override
-            public boolean areItemsTheSame(@NonNull GithubRepoDomain githubRepoDomain, @NonNull GithubRepoDomain t1) {
-                return githubRepoDomain.getId() == t1.getId();
-            }
-
-            @Override
-            public boolean areContentsTheSame(@NonNull GithubRepoDomain githubRepoDomain, @NonNull GithubRepoDomain t1) {
-                return !TextUtils.isEmpty(githubRepoDomain.getDescription()) &&
-                        githubRepoDomain.getDescription().equalsIgnoreCase(t1.getDescription());
-            }
-        }));
+        setUpRecycler();
     }
 
     @Override
@@ -129,6 +106,7 @@ public class MainActivity extends AppCompatActivity
         navigationView = findViewById(R.id.nav_view);
         queryInput = findViewById(R.id.main__input__query);
         resultsList = findViewById(R.id.main__list__elements);
+        loadingIndicator = findViewById(R.id.main__progress__loading);
     }
 
     private void registerObserverIntoLiveData() {
@@ -140,6 +118,7 @@ public class MainActivity extends AppCompatActivity
                         resultsList != null &&
                         resultsList.getAdapter() != null &&
                         resultsList.getAdapter() instanceof PagedListAdapter) {
+                    setLoading(false);
                     ((PagedListAdapter) resultsList.getAdapter()).submitList(repoDomains);
                 }
             }
@@ -147,9 +126,21 @@ public class MainActivity extends AppCompatActivity
         searchRepoViewModel.getErrorMessageLiveData().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
+                setLoading(false);
                 Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void setLoading(boolean loading) {
+        if (loading) {
+            resultsList.setVisibility(View.GONE);
+            loadingIndicator.setVisibility(View.VISIBLE);
+
+        } else {
+            resultsList.setVisibility(View.VISIBLE);
+            loadingIndicator.setVisibility(View.GONE);
+        }
     }
 
     private void setUpTextWatcher() {
@@ -161,6 +152,7 @@ public class MainActivity extends AppCompatActivity
                     if (!TextUtils.isEmpty(query) &&
                             query.length() > MIN_CHARS_TO_LAUNCH_REQUEST &&
                             isGreaterThanMaxTimestamp()) {
+                        setLoading(true);
                         setTimestamp();
                         if (resultsList != null &&
                                 resultsList.getAdapter() != null &&
@@ -181,6 +173,7 @@ public class MainActivity extends AppCompatActivity
                     if (!TextUtils.isEmpty(query) &&
                             query.length() > MIN_CHARS_TO_LAUNCH_REQUEST &&
                             isGreaterThanMaxTimestamp()) {
+                        setLoading(true);
                         setTimestamp();
                         searchRepoViewModel.updateQuery(query);
                     }
@@ -188,27 +181,6 @@ public class MainActivity extends AppCompatActivity
                 return false;
             }
         });
-//        queryInput.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                setTimestamp();
-//                searchRepoViewModel.updateQuery(charSequence.toString());
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                if (!TextUtils.isEmpty(charSequence) &&
-//                        charSequence.length() > MIN_CHARS_TO_LAUNCH_REQUEST &&
-//                        isGreaterThanMaxTimestamp()) {
-//
-//                }
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable editable) {
-//
-//            }
-//        });
     }
 
     private boolean isGreaterThanMaxTimestamp() {
@@ -218,6 +190,37 @@ public class MainActivity extends AppCompatActivity
 
     private void setTimestamp() {
         timeStampToLastModificationIntoInput = Calendar.getInstance().getTimeInMillis();
+    }
+
+    private void setUpMenuAndFab() {
+        setSupportActionBar(toolbar);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setLoading(true);
+                searchRepoViewModel.updateQuery(queryInput.getText().toString());
+            }
+        });
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    private void setUpRecycler() {
+        resultsList.setAdapter(new GithubRepoAdapter(new DiffUtil.ItemCallback<GithubRepoDomain>() {
+            @Override
+            public boolean areItemsTheSame(@NonNull GithubRepoDomain githubRepoDomain, @NonNull GithubRepoDomain t1) {
+                return githubRepoDomain.getId() == t1.getId();
+            }
+
+            @Override
+            public boolean areContentsTheSame(@NonNull GithubRepoDomain githubRepoDomain, @NonNull GithubRepoDomain t1) {
+                return !TextUtils.isEmpty(githubRepoDomain.getDescription()) &&
+                        githubRepoDomain.getDescription().equalsIgnoreCase(t1.getDescription());
+            }
+        }));
     }
     //endregion
 }
