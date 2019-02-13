@@ -14,6 +14,14 @@ import com.franlopez.androidcertification.model.domain.GithubRepoDomain;
 
 public class GithubRepoAdapter extends PagedListAdapter<GithubRepoDomain, GithubRepoAdapter.GithubRepoViewHolder> {
 
+    private GithubRepoClickListener dummyListener = new GithubRepoClickListener() {
+        @Override
+        public void onItemClicked(int position, GithubRepoDomain repoDomain) {
+            //- DO ANYTHING
+        }
+    };
+    private GithubRepoClickListener listener;
+
     public GithubRepoAdapter(@NonNull DiffUtil.ItemCallback<GithubRepoDomain> diffCallback) {
         super(diffCallback);
     }
@@ -33,6 +41,16 @@ public class GithubRepoAdapter extends PagedListAdapter<GithubRepoDomain, Github
         }
     }
 
+    public void setListener(GithubRepoClickListener listener) {
+        if (listener != null) {
+            this.listener = listener;
+        }
+    }
+
+    public GithubRepoDomain getItemByPosition(int position) {
+        return getItem(position);
+    }
+
     class GithubRepoViewHolder extends RecyclerView.ViewHolder {
 
         private TextView nameLabel;
@@ -42,10 +60,20 @@ public class GithubRepoAdapter extends PagedListAdapter<GithubRepoDomain, Github
             nameLabel = itemView.findViewById(R.id.row_github_repo__label__name);
         }
 
-        void bind(GithubRepoDomain repo, int position) {
+        void bind(final GithubRepoDomain repo, int position) {
             if (repo != null) {
                 nameLabel.setText(position + " - " + repo.getName());
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        getListener().onItemClicked(getAdapterPosition(), repo);
+                    }
+                });
             }
         }
+    }
+
+    private GithubRepoClickListener getListener() {
+        return listener;
     }
 }

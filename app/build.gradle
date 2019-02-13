@@ -55,6 +55,8 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttpLoggingInterceptorVersion"
 
     testImplementation 'junit:junit:4.12'
+    testImplementation 'com.android.support.test:runner:1.0.2'
+
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
 
     // Espresso UI Testing dependencies.

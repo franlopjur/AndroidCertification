@@ -7,8 +7,15 @@ import android.view.WindowManager;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
+/**
+ * Clase utilizada para saber si se muestra un Toast
+ */
 public class ToastMatcher extends TypeSafeMatcher<Root> {
 
+    /**
+     * Sólo se usa para los logs
+     * @param description
+     */
     @Override
     public void describeTo(Description description) {
         description.appendText("is toast");
@@ -20,9 +27,7 @@ public class ToastMatcher extends TypeSafeMatcher<Root> {
         if ((type == WindowManager.LayoutParams.TYPE_TOAST)) {
             IBinder windowToken = root.getDecorView().getWindowToken();
             IBinder appToken = root.getDecorView().getApplicationWindowToken();
-            if (windowToken == appToken) {
-                return true;
-            }
+            return windowToken == appToken;
         }
         return false;
     }

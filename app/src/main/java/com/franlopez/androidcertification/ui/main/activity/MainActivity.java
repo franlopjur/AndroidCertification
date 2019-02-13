@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.franlopez.androidcertification.R;
 import com.franlopez.androidcertification.model.domain.GithubRepoDomain;
 import com.franlopez.androidcertification.ui.main.GithubRepoAdapter;
+import com.franlopez.androidcertification.ui.main.GithubRepoClickListener;
 import com.franlopez.androidcertification.ui.viewmodel.SearchRepoViewModel;
 
 import java.util.Calendar;
@@ -46,6 +47,8 @@ public class MainActivity extends AppCompatActivity
     private EditText queryInput;
     private RecyclerView resultsList;
     private ProgressBar loadingIndicator;
+
+    private GithubRepoAdapter adapter;
 
     private long timeStampToLastModificationIntoInput;
 
@@ -209,7 +212,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setUpRecycler() {
-        resultsList.setAdapter(new GithubRepoAdapter(new DiffUtil.ItemCallback<GithubRepoDomain>() {
+        adapter = new GithubRepoAdapter(new DiffUtil.ItemCallback<GithubRepoDomain>() {
             @Override
             public boolean areItemsTheSame(@NonNull GithubRepoDomain githubRepoDomain, @NonNull GithubRepoDomain t1) {
                 return githubRepoDomain.getId() == t1.getId();
@@ -220,7 +223,14 @@ public class MainActivity extends AppCompatActivity
                 return !TextUtils.isEmpty(githubRepoDomain.getDescription()) &&
                         githubRepoDomain.getDescription().equalsIgnoreCase(t1.getDescription());
             }
-        }));
+        });
+        adapter.setListener(new GithubRepoClickListener() {
+            @Override
+            public void onItemClicked(int position, GithubRepoDomain repoDomain) {
+                Toast.makeText(MainActivity.this, repoDomain.getName(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        resultsList.setAdapter(adapter);
     }
     //endregion
 }

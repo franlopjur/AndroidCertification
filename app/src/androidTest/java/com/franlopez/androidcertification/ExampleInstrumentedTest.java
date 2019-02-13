@@ -3,17 +3,21 @@ package com.franlopez.androidcertification;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.franlopez.androidcertification.commons.FileUtils;
 import com.franlopez.androidcertification.commons.ValidationUtils;
+import com.franlopez.androidcertification.data.GithubRepository;
 import com.franlopez.androidcertification.db.MyDatabase;
 import com.franlopez.androidcertification.db.dao.GithubRepoDao;
 import com.franlopez.androidcertification.model.domain.GithubRepoDomain;
 import com.franlopez.androidcertification.model.domain.GithubRepoSearchDomain;
+import com.franlopez.androidcertification.ui.main.activity.MainActivity;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -31,7 +35,12 @@ import static org.junit.Assert.*;
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
 
+    @Rule
+    public ActivityTestRule activityRule = new ActivityTestRule<>(
+            MainActivity.class);
+
     private GithubRepoDao githubRepoDao;
+    private GithubRepository githubRepository;
     private MyDatabase db;
 
     @Before
@@ -39,6 +48,7 @@ public class ExampleInstrumentedTest {
         Context appContext = InstrumentationRegistry.getTargetContext();
         db = Room.inMemoryDatabaseBuilder(appContext, MyDatabase.class).build();
         githubRepoDao = db.reposDao();
+        githubRepository = new GithubRepository();
     }
 
     @After

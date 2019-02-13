@@ -25,6 +25,17 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.calculator.CalculatorActivity" />
+
+        <activity android:name=".ui.uitest.FirstActivity" >
+
+        </activity>
+
+        <activity android:name=".ui.uitest.SecondActivity" />
+
+        <activity android:name=".ui.phonenumber.PhoneNumberActivity" >
+
+        </activity>
         <service
             android:name=".task.jobs.CustomJobService"
             android:label="Github Service"
