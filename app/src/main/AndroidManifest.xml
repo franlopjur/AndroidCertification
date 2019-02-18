@@ -14,33 +14,41 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity
-            android:name=".ui.main.activity.MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".ui.hellotoast.HelloToastActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.main.activity.MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
 
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
+        </activity>
+        <activity android:name=".ui.notification.NotificationActivity">
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
         <activity android:name=".ui.calculator.CalculatorActivity" />
-
-        <activity android:name=".ui.uitest.FirstActivity" >
-
-        </activity>
-
+        <activity android:name=".ui.uitest.FirstActivity" />
         <activity android:name=".ui.uitest.SecondActivity" />
+        <activity android:name=".ui.phonenumber.PhoneNumberActivity" />
 
-        <activity android:name=".ui.phonenumber.PhoneNumberActivity" >
-
-        </activity>
         <service
-            android:name=".task.jobs.CustomJobService"
-            android:label="Github Service"
-            android:permission="android.permission.BIND_JOB_SERVICE" >
-        </service>
+            android:name=".task.jobs.ChargingIndicatorJobService"
+            android:label="Charging Service"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
 </manifest>

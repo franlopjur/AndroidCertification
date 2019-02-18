@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -228,6 +229,14 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onItemClicked(int position, GithubRepoDomain repoDomain) {
                 Toast.makeText(MainActivity.this, repoDomain.getName(), Toast.LENGTH_SHORT).show();
+                final Snackbar snackbar = Snackbar.make(resultsList, repoDomain.getDescription(), Toast.LENGTH_SHORT);
+                snackbar.setAction("Acción", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        snackbar.dismiss();
+                    }
+                });
+                snackbar.show();
             }
         });
         resultsList.setAdapter(adapter);

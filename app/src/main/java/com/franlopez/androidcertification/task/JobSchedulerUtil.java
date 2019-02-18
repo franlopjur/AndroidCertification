@@ -13,19 +13,19 @@ public class JobSchedulerUtil {
     public static final boolean NOT_RETRY_JOB_EXECUTION = false;
 
     //region Public Static Methods
-    public static void scheduleJob(Context context, Class clazz) {
+    public static void scheduleJob(Context context, Class clazz, boolean charging) {
         ComponentName githubComponent = new ComponentName(context, clazz);
-        getJobScheduler(context).schedule(generateJobInfo(githubComponent).build());
+        getJobScheduler(context).schedule(generateJobInfo(githubComponent, charging).build());
     }
     //endregion
 
     //region Static Private Methods
-    private static JobInfo.Builder generateJobInfo(ComponentName componentName) {
+    private static JobInfo.Builder generateJobInfo(ComponentName componentName, boolean charging) {
         JobInfo.Builder builder = new JobInfo.Builder(componentName.hashCode(), componentName);
-        builder.setRequiresCharging(false);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
-        builder.setOverrideDeadline(0);
-        return builder.setRequiresCharging(false);
+//        builder.setOverrideDeadline(5000);
+        builder.setMinimumLatency(10000);
+        return builder.setRequiresCharging(charging);
     }
 
     private static JobScheduler getJobScheduler(Context context) {

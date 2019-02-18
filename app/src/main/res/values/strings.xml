@@ -41,6 +41,10 @@
     <string name="hint_phonenumber">Enter a phone number</string>
     <string name="phonenumber_label">Phone Number:</string>
     <string name="nothing_entered">Nothing entered</string>
+    <string name="row_info_format">%d - %s</string>
+    <string name="notification__notify_me">Notify Me!</string>
+    <string name="hello_toast__show_toast">Show Toast</string>
+    <string name="hello_toast__increase_counter">Increase Counter</string>
 
     <string-array name="labels_array">
         <item>Home</item>

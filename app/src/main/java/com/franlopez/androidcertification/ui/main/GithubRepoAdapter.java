@@ -20,7 +20,7 @@ public class GithubRepoAdapter extends PagedListAdapter<GithubRepoDomain, Github
             //- DO ANYTHING
         }
     };
-    private GithubRepoClickListener listener;
+    private GithubRepoClickListener listener = dummyListener;
 
     public GithubRepoAdapter(@NonNull DiffUtil.ItemCallback<GithubRepoDomain> diffCallback) {
         super(diffCallback);
@@ -62,7 +62,8 @@ public class GithubRepoAdapter extends PagedListAdapter<GithubRepoDomain, Github
 
         void bind(final GithubRepoDomain repo, int position) {
             if (repo != null) {
-                nameLabel.setText(position + " - " + repo.getName());
+                String name = String.format(itemView.getContext().getString(R.string.row_info_format), position, repo.getName());
+                nameLabel.setText(name);
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -71,9 +72,9 @@ public class GithubRepoAdapter extends PagedListAdapter<GithubRepoDomain, Github
                 });
             }
         }
-    }
 
-    private GithubRepoClickListener getListener() {
-        return listener;
+        private GithubRepoClickListener getListener() {
+            return listener;
+        }
     }
 }
