@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
 import android.arch.paging.PagedListAdapter;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,6 +15,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -29,9 +31,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.franlopez.androidcertification.R;
+import com.franlopez.androidcertification.commons.ViewHelper;
 import com.franlopez.androidcertification.model.domain.GithubRepoDomain;
+import com.franlopez.androidcertification.ui.word.WordActivity;
+import com.franlopez.androidcertification.ui.calculator.CalculatorActivity;
 import com.franlopez.androidcertification.ui.main.GithubRepoAdapter;
 import com.franlopez.androidcertification.ui.main.GithubRepoClickListener;
+import com.franlopez.androidcertification.ui.settings.SettingsActivity;
 import com.franlopez.androidcertification.ui.viewmodel.SearchRepoViewModel;
 
 import java.util.Calendar;
@@ -82,15 +88,37 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        MenuItem item = menu.findItem(R.id.menu__night_mode);
+        updateMenuView(item);
         return true;
+    }
+
+    private void updateMenuView(MenuItem item) {
+        if (item != null) {
+            item.setTitle(isNightModeEnable() ?
+                                  R.string.menu__day_theme : R.string.menu__night_theme);
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.menu__night_mode:
+                if (isNightModeEnable()) {
+                    setDayMode(AppCompatDelegate.MODE_NIGHT_NO);
+
+                } else {
+                    setDayMode(AppCompatDelegate.MODE_NIGHT_YES);
+                }
+                break;
+            case R.id.menu__go_to_settings:
+                Intent goToSettings = new Intent(this, SettingsActivity.class);
+                startActivity(goToSettings);
+                break;
         }
+        updateMenuView(item);
+        recreate();
         return super.onOptionsItemSelected(item);
     }
 
@@ -98,6 +126,16 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         drawer.closeDrawer(GravityCompat.START);
+        switch (item.getItemId()) {
+            case R.id.nav_calculator:
+                Intent goToCalculator  = new Intent(this, CalculatorActivity.class);
+                startActivity(goToCalculator);
+                break;
+            case R.id.nav_word:
+                Intent goToWord  = new Intent(this, WordActivity.class);
+                startActivity(goToWord);
+                break;
+        }
         return true;
     }
     //endregion
@@ -206,7 +244,13 @@ public class MainActivity extends AppCompatActivity
             }
         });
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                ViewHelper.hideKeyboard(drawerView);
+                super.onDrawerOpened(drawerView);
+            }
+        };
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
@@ -240,6 +284,15 @@ public class MainActivity extends AppCompatActivity
             }
         });
         resultsList.setAdapter(adapter);
+    }
+
+    private boolean isNightModeEnable() {
+        int nightMode = AppCompatDelegate.getDefaultNightMode();
+        return nightMode == AppCompatDelegate.MODE_NIGHT_YES;
+    }
+
+    private void setDayMode(int mode) {
+        AppCompatDelegate.setDefaultNightMode(mode);
     }
     //endregion
 }

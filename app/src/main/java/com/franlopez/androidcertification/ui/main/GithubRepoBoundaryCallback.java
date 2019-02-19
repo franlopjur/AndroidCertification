@@ -3,8 +3,8 @@ package com.franlopez.androidcertification.ui.main;
 import android.arch.paging.PagedList;
 import android.support.annotation.NonNull;
 
-import com.franlopez.androidcertification.data.GithubRepoApiDataSource;
-import com.franlopez.androidcertification.data.GithubRepoCacheDataSource;
+import com.franlopez.androidcertification.data.github.GithubRepoApiDataSource;
+import com.franlopez.androidcertification.data.github.GithubRepoCacheDataSource;
 import com.franlopez.androidcertification.data.RepositoryListener;
 import com.franlopez.androidcertification.model.domain.GithubRepoDomain;
 

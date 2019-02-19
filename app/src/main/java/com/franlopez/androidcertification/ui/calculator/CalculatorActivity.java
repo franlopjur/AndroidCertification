@@ -16,8 +16,6 @@
 
 package com.franlopez.androidcertification.ui.calculator;
 
-import android.app.Activity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -25,6 +23,7 @@ import android.widget.TextView;
 
 import com.franlopez.androidcertification.R;
 import com.franlopez.androidcertification.manager.Calculator;
+import com.franlopez.androidcertification.ui.base.BaseActivity;
 
 /**
  * SimpleCalc is the initial version of SimpleCalcTest.  It has
@@ -35,7 +34,7 @@ import com.franlopez.androidcertification.manager.Calculator;
  * All the input validation and the unit tests are added as part of the lessons.
  *
  */
-public class CalculatorActivity extends Activity {
+public class CalculatorActivity extends BaseActivity {
 
     private static final String TAG = CalculatorActivity.class.getSimpleName();
 
@@ -47,15 +46,27 @@ public class CalculatorActivity extends Activity {
     private TextView mResultTextView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_calculator);
+    public int getContentLayout() {
+        return R.layout.calculator_container;
+    }
 
-        // Initialize the calculator class and all the views
+    @Override
+    public void initializeViews() {
         mCalculator = new Calculator();
+
         mResultTextView = findViewById(R.id.operation_result_text_view);
         mOperandOneEditText = findViewById(R.id.operand_one_edit_text);
         mOperandTwoEditText = findViewById(R.id.operand_two_edit_text);
+    }
+
+    @Override
+    protected void fabActionBehaviour() {
+        //- DO ANYTHING
+    }
+
+    @Override
+    protected boolean isFabVisible() {
+        return false;
     }
 
     /**

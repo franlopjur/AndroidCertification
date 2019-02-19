@@ -1,4 +1,4 @@
-package com.franlopez.androidcertification.data;
+package com.franlopez.androidcertification.data.github;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -9,6 +9,7 @@ import android.text.TextUtils;
 
 import com.franlopez.androidcertification.SingleLiveEvent;
 import com.franlopez.androidcertification.commons.Constants;
+import com.franlopez.androidcertification.data.RepositoryListener;
 import com.franlopez.androidcertification.model.domain.GithubRepoDomain;
 import com.franlopez.androidcertification.ui.main.GithubRepoBoundaryCallback;
 

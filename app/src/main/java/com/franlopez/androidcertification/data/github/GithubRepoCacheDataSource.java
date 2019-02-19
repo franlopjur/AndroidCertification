@@ -1,9 +1,8 @@
-package com.franlopez.androidcertification.data;
+package com.franlopez.androidcertification.data.github;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.paging.DataSource;
-import android.arch.paging.PagedList;
 
+import com.franlopez.androidcertification.data.RepositoryListener;
 import com.franlopez.androidcertification.db.MyDatabase;
 import com.franlopez.androidcertification.model.domain.GithubRepoDomain;
 

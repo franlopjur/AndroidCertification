@@ -8,10 +8,8 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.paging.PagedList;
 
 import com.franlopez.androidcertification.SingleLiveEvent;
-import com.franlopez.androidcertification.data.GithubRepository;
+import com.franlopez.androidcertification.data.github.GithubRepository;
 import com.franlopez.androidcertification.model.domain.GithubRepoDomain;
-
-import java.util.List;
 
 public class SearchRepoViewModel extends ViewModel {
 

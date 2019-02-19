@@ -2,8 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
+        android:id="@+id/menu__night_mode"
+        android:title="@string/menu__night_theme"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu__go_to_settings"
         android:title="@string/action_settings"
         app:showAsAction="never" />
 </menu>

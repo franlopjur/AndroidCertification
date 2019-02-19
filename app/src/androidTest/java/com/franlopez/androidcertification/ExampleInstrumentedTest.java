@@ -8,7 +8,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.franlopez.androidcertification.commons.FileUtils;
 import com.franlopez.androidcertification.commons.ValidationUtils;
-import com.franlopez.androidcertification.data.GithubRepository;
+import com.franlopez.androidcertification.data.github.GithubRepository;
 import com.franlopez.androidcertification.db.MyDatabase;
 import com.franlopez.androidcertification.db.dao.GithubRepoDao;
 import com.franlopez.androidcertification.model.domain.GithubRepoDomain;
