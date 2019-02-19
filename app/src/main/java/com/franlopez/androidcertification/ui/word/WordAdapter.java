@@ -14,8 +14,11 @@ import java.util.List;
 
 public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder> {
 
+    //region Members
     private List<WordDomain> wordList;
+    //endregion
 
+    //region Public Methods
     public WordAdapter(List<WordDomain> wordList) {
         this.wordList = wordList;
     }
@@ -36,20 +39,28 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
         return wordList.size();
     }
 
+    public void setWordList(List<WordDomain> wordList) {
+        this.wordList = wordList;
+        notifyDataSetChanged();
+    }
+    //endregion
+
+    //region Private Methods
     private List<WordDomain> getWordList() {
         return wordList;
     }
+    //endregion
 
     class WordViewHolder extends RecyclerView.ViewHolder {
 
         private TextView nameLabel;
 
-        public WordViewHolder(@NonNull View itemView) {
+        WordViewHolder(@NonNull View itemView) {
             super(itemView);
             nameLabel = itemView.findViewById(R.id.row_word__label__name);
         }
 
-        public void bind() {
+        void bind() {
             if (getWordList() != null &&
                     !getWordList().isEmpty()) {
                 WordDomain item = getWordList().get(getLayoutPosition());
